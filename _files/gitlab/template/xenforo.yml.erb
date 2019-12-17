@@ -22,7 +22,6 @@ spec:
       labels:
         app: xenforo
     spec:
-      restartPolicy: Never
       initContainers:
       - name: git-checkout
         image: alpine/git
@@ -45,20 +44,20 @@ spec:
           mkdir -m 0777 ./internal_data
 
           cd /src-volume
-          mkdir ./xenforo2 && cd "$_"
+          mkdir ./xenforo2 && cd ./xenforo2
           git init .
           git remote add origin <%= _XENFORO2_REPO %>
           git fetch --depth 1 origin master
           git checkout FETCH_HEAD
-          ls -al .
+          ls -al . | tee /data-volume/xenforo2.log
 
           cd /src-volume
-          mkdir ./self && cd "$_"
+          mkdir ./self && cd ./self
           git init .
           git remote add origin https://<%= _CI_DEPLOY_USER %>:<%= _CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
           git fetch --depth 1 origin <%= _CI_COMMIT_SHA %>
           git checkout FETCH_HEAD
-          ls -al .
+          ls -al . | tee /data-volume/self.log
 
           cd /src-volume
           cp -R ./xenforo2/xenforo ./xenforo

@@ -71,6 +71,9 @@ spec:
         envFrom:
         - configMapRef:
             name: env
+        ports:
+        - name: http-80
+          containerPort: 80
         volumeMounts:
         - name: src-volume
           mountPath: /var/www/html

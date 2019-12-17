@@ -22,6 +22,7 @@ spec:
       labels:
         app: xenforo
     spec:
+      restartPolicy: Never
       initContainers:
       - name: git-checkout
         image: alpine/git

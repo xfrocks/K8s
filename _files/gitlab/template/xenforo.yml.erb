@@ -40,7 +40,7 @@ spec:
 
           cd /src-volume
           git init
-          git remote add origin <%= XENFORO2_REPO %>
+          git remote add origin <%= _XENFORO2_REPO %>
           git fetch --depth 1 origin master
           git checkout FETCH_HEAD
           ls -al ./xenforo
@@ -48,7 +48,8 @@ spec:
           cd ./xenforo/src/addons
           mkdir -p ./Xfrocks/UsingK8s && cd "$_"
           git init
-          git remote add origin https://<%= CI_DEPLOY_USER %>:<%= CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
+          git remote add origin https://<%= _CI_DEPLOY_USER %>:<%= _CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
+          git fetch --depth 1 origin <%= _CI_COMMIT_SHA %>
           git checkout FETCH_HEAD
           ls -al .
 

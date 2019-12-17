@@ -37,6 +37,7 @@ spec:
           cd /data-volume
           if [ -d ./data ]; then
             echo './data already exists' >&2
+            ls -al .
             exit 0
           fi
           mkdir -m 0777 ./data

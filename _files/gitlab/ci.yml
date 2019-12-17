@@ -1,5 +1,6 @@
 variables:
   DOCKER_IMAGE_KUBERNETES_DEPLOY: daohoangson/kubernetes-deploy:0.23.0
+  GIT_DEPTH: 1
   K8S_NAMESPACE: xfrocks-using-k8s-$CI_COMMIT_REF_SLUG
 
 deploy_k8s:

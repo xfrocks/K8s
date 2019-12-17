@@ -49,7 +49,6 @@ spec:
           mkdir -p ./Xfrocks/UsingK8s && cd "$_"
           git init
           git remote add origin https://<%= CI_DEPLOY_USER %>:<%= CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
-          git fetch --depth 1 origin <%= CI_COMMIT_SHA %>
           git checkout FETCH_HEAD
           ls -al .
 

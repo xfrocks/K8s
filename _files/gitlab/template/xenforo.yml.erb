@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xenforo
+  labels:
+    service: xenforo
+spec:
+  ports:
+  - name: http-80
+    port: 80
+    targetPort: http-80
+  selector:
+    app: xenforo
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: xenforo
+spec:
+  template:
+    metadata:
+      labels:
+        app: xenforo
+    spec:
+      initContainers:
+      - name: git-checkout
+        image: alpine/git
+        envFrom:
+        - configMapRef:
+            name: env
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -euo pipefail
+
+          cd /data-volume
+          mkdir -p -m 0777 ./data
+          mkdir -p -m 0777 ./internal_data
+
+          cd /src-volume
+          git init
+          git remote add origin <%= XENFORO2_REPO %>
+          git fetch --depth 1 origin master
+          git checkout FETCH_HEAD
+          ls -al ./xenforo
+
+          cd ./xenforo/src/addons
+          mkdir -p ./Xfrocks/UsingK8s && cd "$_"
+          git init
+          git remote add origin https://<%= CI_DEPLOY_USER %>:<%= CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
+          git fetch --depth 1 origin <%= CI_COMMIT_SHA %>
+          git checkout FETCH_HEAD
+          ls -al .
+
+          cp ./_files/gitlab/config.php /src/volume/xenforo/src/config.php
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data-volume
+        - name: src-volume
+          mountPath: /src-volume
+      containers:
+      - name: php
+        image: xfrocks/xenforo:php-apache-7.3.12
+        envFrom:
+        - configMapRef:
+            name: env
+        volumeMounts:
+        - name: src-volume
+          mountPath: /var/www/html
+          subPath: xenforo
+          readOnly: true
+        - name: data-volume
+          mountPath: /var/www/html/data
+          subPath: data
+        - name: data-volume
+          mountPath: /var/www/html/internal_data
+          subPath: internal_data
+      volumes:
+      - name: data-volume
+        emptyDir: {}
+      - name: src-volume
+        emptyDir: {}

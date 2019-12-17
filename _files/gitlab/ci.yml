@@ -1,0 +1,3 @@
+test_env:
+  script:
+    - env

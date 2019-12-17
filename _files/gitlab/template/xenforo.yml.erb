@@ -35,25 +35,31 @@ spec:
           set -euo pipefail
 
           cd /data-volume
-          mkdir -p -m 0777 ./data
-          mkdir -p -m 0777 ./internal_data
+          if [ -d ./data ]; then
+            exit 0
+          fi
+          mkdir -m 0777 ./data
+          mkdir -m 0777 ./internal_data
 
           cd /src-volume
+          mkdir ./xenforo2 && cd "$_"
           git init .
           git remote add origin <%= _XENFORO2_REPO %>
           git fetch --depth 1 origin master
           git checkout FETCH_HEAD
-          ls -al ./xenforo
+          ls -al .
 
-          cd ./xenforo/src/addons
-          mkdir -p ./Xfrocks/UsingK8s && cd "$_"
+          cd /src-volume
+          mkdir ./self && cd "$_"
           git init .
           git remote add origin https://<%= _CI_DEPLOY_USER %>:<%= _CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
           git fetch --depth 1 origin <%= _CI_COMMIT_SHA %>
           git checkout FETCH_HEAD
           ls -al .
 
-          cp ./_files/gitlab/config.php /src/volume/xenforo/src/config.php
+          cd /src-volume
+          cp -R ./xenforo2/xenforo ./xenforo
+          cp ./self/_files/gitlab/config.php ./xenforo/src/config.php
         volumeMounts:
         - name: data-volume
           mountPath: /data-volume

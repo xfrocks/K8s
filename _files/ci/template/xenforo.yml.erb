@@ -51,7 +51,7 @@ spec:
 
           cd /src-volume
           cp -R ./xenforo2/xenforo ./xenforo
-          cp ./self/_files/gitlab/config.php ./xenforo/src/config.php
+          cp ./self/_files/ci/config.php ./xenforo/src/config.php
         volumeMounts:
         - name: data-volume
           mountPath: /data-volume

@@ -9,7 +9,7 @@ deploy_review:
     url: http://$CI_COMMIT_REF_SLUG.using-k8s.xfrocks.com
     on_stop: stop_review
   image: $DOCKER_IMAGE_KUBERNETES_DEPLOY
-  script: ./_files/gitlab/deploy.sh
+  script: ./_files/ci/deploy.sh
   only:
     - merge_requests
 

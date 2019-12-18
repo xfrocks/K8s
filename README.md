@@ -7,7 +7,7 @@ Helper to deploy XenForo on Kubernetes
 
 In order to enable GitLab CI, follow these steps:
 
-1. Update setting **Custom CI configuration path** to `_files/gitlab/ci.yml`
+1. Update setting **Custom CI configuration path** to `_files/ci/gitlab.yml` (Settings > CI / CD > General pipelines)
 1. Add variable: `KUBERNETES_DEPLOY_CA`
 1. Add variable: `KUBERNETES_DEPLOY_SERVER`
 1. Add variable: `KUBERNETES_DEPLOY_TOKEN`

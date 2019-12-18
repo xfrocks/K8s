@@ -16,4 +16,4 @@ kubernetes-deploy $K8S_NAMESPACE $KUBERNETES_DEPLOY_CONTEXT \
   "--binding=_CI_COMMIT_SHA=$CI_COMMIT_SHA" \
   "--binding=_SELF_REPO=$SELF_REPO" \
   "--binding=_XENFORO2_REPO=$XENFORO2_REPO" \
-  --template-dir=_files/gitlab/template
+  --template-dir=_files/ci/template

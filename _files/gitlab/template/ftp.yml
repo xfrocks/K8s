@@ -6,7 +6,10 @@ spec:
   ports:
   - name: ftp-21
     port: 21
-    targetPort: ftp-21
+    targetPort: ftp-external
+  - name: ftp-10021
+    port: 10021
+    targetPort: ftp-internal
   - name: http-80
     port: 80
     targetPort: http-80
@@ -47,18 +50,35 @@ spec:
         volumeMounts:
         - name: data-claim
           mountPath: /usr/share/nginx/html
-      - name: ftp
+      - name: ftp-external
         env:
-        - name: USERS
-          value: data|password internal_data|password
-        envFrom:
-        - configMapRef:
-            name: env
-        image: delfer/alpine-ftp-server
+        - name: FTP_USER_NAME
+          value: data
+        - name: FTP_USER_PASS
+          value: password
+        - name: FTP_USER_HOME
+          value: /home/data
+        image: stilliard/pure-ftpd:hardened
         imagePullPolicy: Always
         ports:
-        - name: ftp-21
+        - name: ftp-external
           containerPort: 21
         volumeMounts:
         - name: data-claim
-          mountPath: /ftp
+          mountPath: /home
+      - name: ftp-internal
+        env:
+        - name: FTP_USER_NAME
+          value: internal_data
+        - name: FTP_USER_PASS
+          value: password
+        - name: FTP_USER_HOME
+          value: /home/internal_data
+        image: stilliard/pure-ftpd:hardened
+        imagePullPolicy: Always
+        ports:
+        - name: ftp-internal
+          containerPort: 21
+        volumeMounts:
+        - name: data-claim
+          mountPath: /home

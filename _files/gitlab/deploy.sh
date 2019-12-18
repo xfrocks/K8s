@@ -14,7 +14,6 @@ fi
 kubernetes-deploy $K8S_NAMESPACE $KUBERNETES_DEPLOY_CONTEXT \
   "--binding=_ingressHost=$_ingressHost" \
   "--binding=_CI_COMMIT_SHA=$CI_COMMIT_SHA" \
-  "--binding=_CI_DEPLOY_PASSWORD=$CI_DEPLOY_PASSWORD" \
-  "--binding=_CI_DEPLOY_USER=$CI_DEPLOY_USER" \
+  "--binding=_SELF_REPO=$SELF_REPO" \
   "--binding=_XENFORO2_REPO=$XENFORO2_REPO" \
   --template-dir=_files/gitlab/template

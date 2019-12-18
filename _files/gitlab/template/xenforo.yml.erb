@@ -45,7 +45,7 @@ spec:
           cd /src-volume
           mkdir ./self && cd ./self
           git init .
-          git remote add origin https://<%= _CI_DEPLOY_USER %>:<%= _CI_DEPLOY_PASSWORD %>@repo.tinhte.vn/xfrocks/UsingK8s.git
+          git remote add origin <%= _SELF_REPO %>
           git fetch --depth 1 origin <%= _CI_COMMIT_SHA %>
           git checkout FETCH_HEAD
 

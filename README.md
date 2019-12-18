@@ -1,4 +1,4 @@
-# Xfrocks/UsingK8s
+# Xfrocks/K8s
 Helper to deploy XenForo on Kubernetes
 
 ## Development

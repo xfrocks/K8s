@@ -3,4 +3,4 @@ runs:
   using: docker
   image: daohoangson/kubernetes-deploy:0.23.0
   args:
-  - ./_files/ci/deploy.sh
+  - ./.github/actions/deploy/run.sh

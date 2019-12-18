@@ -46,7 +46,7 @@ spec:
           mkdir ./self && cd ./self
           git init .
           git remote add origin <%= _SELF_REPO %>
-          git fetch --depth 1 origin <%= _CI_COMMIT_SHA %>
+          git fetch --depth 1 origin <%= _REVISION %>
           git checkout FETCH_HEAD
 
           cd /src-volume

@@ -96,12 +96,13 @@ spec:
           mountPath: /etc/pure-ftpd/conf/Bind
       volumes:
       - name: ftp-internal-volume
-        configMap:
-          name: ftp-internal
+        secret:
+          secretName: ftp-internal
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: ftp-internal
 data:
-  Bind: ',10021'
+  Bind: LDEwMDIxCg==
+

@@ -1,8 +1,5 @@
 name: Deploy workflow
-on:
-  pull_request:
-    branches:
-    - master
+on: [deployment]
 
 jobs:
   deploy_job:

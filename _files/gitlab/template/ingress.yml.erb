@@ -4,10 +4,6 @@ metadata:
   name: xenforo
   annotations:
     kubernetes.io/ingress.class: nginx
-
-    # maxxx
-    nginx.ingress.kubernetes.io/proxy-body-size: 50m
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
 spec:
   rules:
   - host: <%= _ingressHost %>

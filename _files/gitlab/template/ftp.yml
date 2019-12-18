@@ -4,12 +4,12 @@ metadata:
   name: ftp
 spec:
   ports:
-  - name: ftp-21
+  - name: ftp
     port: 21
-    targetPort: ftp-21
-  - name: http-80
+    targetPort: 21
+  - name: http
     port: 80
-    targetPort: http-80
+    targetPort: 80
   selector:
     app: ftp
 ---
@@ -42,8 +42,7 @@ spec:
       - name: nginx
         image: nginx:1.17.6-alpine
         ports:
-        - name: http-80
-          containerPort: 80
+        - containerPort: 80
         volumeMounts:
         - name: data-claim
           mountPath: /usr/share/nginx/html
@@ -58,8 +57,7 @@ spec:
         - -P
         - ftp
         ports:
-        - name: ftp-21
-          containerPort: 21
+        - containerPort: 21
         volumeMounts:
         - name: data-claim
           mountPath: /home/ftpusers

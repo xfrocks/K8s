@@ -4,9 +4,8 @@ metadata:
   name: mysql
 spec:
   ports:
-  - name: mysql-3306
-    port: 3306
-    targetPort: mysql-3306
+  - port: 3306
+    targetPort: 3306
   selector:
     db: mysql
 ---
@@ -58,8 +57,7 @@ spec:
             name: env
         image: mysql:5.7.28
         ports:
-        - name: mysql-3306
-          containerPort: 3306
+        - containerPort: 3306
         volumeMounts:
         - name: data-claim
           subPath: data

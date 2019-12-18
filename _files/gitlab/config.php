@@ -24,7 +24,6 @@ $config['fsAdapters']['internal-data'] = function () {
   	'host' => 'ftp',
   	'passive' => false,
   	'password' => 'password',
-    'port' => 10021,
   	'username' => 'internal_data',
   ]);
 };

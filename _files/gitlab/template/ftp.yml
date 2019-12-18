@@ -4,12 +4,9 @@ metadata:
   name: ftp
 spec:
   ports:
-  - name: ftp-external
+  - name: ftp-21
     port: 21
-    targetPort: ftp-external
-  - name: ftp-internal
-    port: 10021
-    targetPort: ftp-internal
+    targetPort: ftp-21
   - name: http-80
     port: 80
     targetPort: http-80
@@ -50,50 +47,26 @@ spec:
         volumeMounts:
         - name: data-claim
           mountPath: /usr/share/nginx/html
-      - name: ftp-external
+      - name: ftp
         image: stilliard/pure-ftpd:hardened
         imagePullPolicy: Always
-        env:
-        - name: FTP_USER_NAME
-          value: data
-        - name: FTP_USER_PASS
-          value: password
-        - name: FTP_USER_HOME
-          value: /home/data
         ports:
-        - name: ftp-external
+        - name: ftp-21
           containerPort: 21
         volumeMounts:
         - name: data-claim
-          mountPath: /home
-      - name: ftp-internal
-        image: stilliard/pure-ftpd:hardened
-        imagePullPolicy: Always
-        env:
-        - name: FTP_USER_NAME
-          value: internal_data
-        - name: FTP_USER_PASS
-          value: password
-        - name: FTP_USER_HOME
-          value: /home/internal_data
-        ports:
-        - name: ftp-internal
-          containerPort: 10021
-        volumeMounts:
-        - name: data-claim
-          mountPath: /home
-        - name: ftp-internal-volume
-          subPath: Bind
-          mountPath: /etc/pure-ftpd/conf/Bind
+          mountPath: /home/ftpusers
+        - name: pure-ftpd-passwd-volume
+          mountPath: /etc/pure-ftpd/passwd
       volumes:
-      - name: ftp-internal-volume
+      - name: pure-ftpd-passwd-volume
         secret:
-          secretName: ftp-internal
+          secretName: pure-ftpd-passwd
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: ftp-internal
+  name: pure-ftpd-passwd
 data:
-  Bind: LDEwMDIxCg==
+  pureftpd.passwd: ZGF0YTokNiRKTlpJSWgvQlZyRzBiWVkwJHhVQTdmRWxKLlBoSXV2Y0EubTdsQnJURGpjVUZObUF0QVJkT1JkLi4xaWVvL3U2VldpN2QuenV4OHlKam5NLjYuS0J3OXlOcDd5aU5tZDBtaW9wODQwOjEwMDA6MTAwMDo6L2hvbWUvZnRwdXNlcnMvZGF0YS8uLzo6Ojo6Ojo6Ojo6OgppbnRlcm5hbF9kYXRhOiQ2JElRUy9OeVJ4Y0pNaWlSbzAkMWYudUJmN2N6WkZSVUFvdEx0bzNCRU5tNXVQZ3F4bmNoRWlQd3h4b3k1dTlnRVZYY2dHcjkubmU2bTdFbWpxRGZIV2FyU2RILy5hSXFESjZpVkVXYS46MTAwMDoxMDAwOjovaG9tZS9mdHB1c2Vycy9pbnRlcm5hbF9kYXRhLy4vOjo6Ojo6Ojo6Ojo6Cg==
 

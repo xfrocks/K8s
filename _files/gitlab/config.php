@@ -5,6 +5,8 @@ $config['db']['host'] = 'mysql';
 $config['db']['password'] = getenv('MYSQL_PASSWORD');
 $config['db']['username'] = getenv('MYSQL_USER');
 
+$config['debug'] = true;
+
 $config['fsAdapters']['data'] = function () {
   return new \League\Flysystem\Adapter\Ftp([
   	'host' => 'ftp',

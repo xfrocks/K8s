@@ -13,6 +13,10 @@ spec:
   - host: <%= _ingressHost %>
     http:
       paths:
+      - path: /data
+        backend:
+          serviceName: ftp
+          servicePort: 80
       - backend:
           serviceName: xenforo
           servicePort: 80

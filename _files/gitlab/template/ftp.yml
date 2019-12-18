@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftp
+spec:
+  ports:
+  - name: ftp-21
+    port: 21
+    targetPort: ftp-21
+  - name: http-80
+    port: 80
+    targetPort: http-80
+  selector:
+    app: ftp
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: ftp
+spec:
+  selector:
+    matchLabels:
+      app: ftp
+  serviceName: ftp
+  volumeClaimTemplates:
+  - metadata:
+      name: data-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  template:
+    metadata:
+      labels:
+        app: ftp
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.6-alpine
+        ports:
+        - name: http-80
+          containerPort: 80
+        volumeMounts:
+        - name: data-claim
+          mountPath: /usr/share/nginx/html/data
+          readOnly: true
+      - name: ftp
+        envFrom:
+        - configMapRef:
+            name: env
+        image: delfer/alpine-ftp-server
+        imagePullPolicy: Always
+        ports:
+        - name: ftp-21
+          containerPort: 21
+        volumeMounts:
+        - name: data-claim
+          mountPath: /ftp/ftp

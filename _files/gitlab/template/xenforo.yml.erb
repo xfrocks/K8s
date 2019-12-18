@@ -70,7 +70,7 @@ spec:
 
           cd /var/www/html
 
-          php cmd.php xf:rebuild-master-data
+          php cmd.php xf:rebuild-master-data || true
         volumeMounts:
         - name: src-volume
           mountPath: /var/www/html

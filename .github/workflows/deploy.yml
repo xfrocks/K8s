@@ -1,0 +1,28 @@
+name: Deploy workflow
+on: [deployment]
+
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - run: echo "::set-env name=_slug::`echo $GITHUB_REF | sed 's#[^a-z0-9]##gi'`"
+    - run: echo "::set-env name=_environmentUrl::http://$_slug.k8s.xfrocks.com"
+    - uses: ./.github/actions/deploy
+      env:
+        KUBERNETES_DEPLOY_CA: ${{ secrets.KUBERNETES_DEPLOY_CA }}
+        KUBERNETES_DEPLOY_SERVER: ${{ secrets.KUBERNETES_DEPLOY_SERVER }}
+        KUBERNETES_DEPLOY_TOKEN: ${{ secrets.KUBERNETES_DEPLOY_TOKEN }}
+        REVISION: ${{ github.sha }}
+        SELF_REPO: https://github.com/${{ github.repository }}
+        XENFORO2_REPO: ${{ secrets.XENFORO2_REPO }}
+        _environmentUrl: ${{ env._environmentUrl }}
+        _slug: ${{ env._slug }}
+    - uses: rsotnychenko/deployment-status-update@0.1.0
+      with:
+        status: success
+        environment_url: ${{ env._environmentUrl }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

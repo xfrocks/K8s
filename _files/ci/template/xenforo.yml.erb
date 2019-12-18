@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xenforo
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: xenforo
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: xenforo
+spec:
+  template:
+    metadata:
+      labels:
+        app: xenforo
+    spec:
+      initContainers:
+      - name: git-checkout
+        image: alpine/git
+        envFrom:
+        - configMapRef:
+            name: env
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -euo pipefail
+
+          cd /data-volume
+          mkdir -p -m 0777 ./data
+          mkdir -p -m 0777 ./internal_data
+
+          cd /src-volume
+          mkdir ./xenforo2 && cd ./xenforo2
+          git init .
+          git remote add origin <%= _XENFORO2_REPO %>
+          git fetch --depth 1 origin master
+          git checkout FETCH_HEAD
+
+          cd /src-volume
+          mkdir ./self && cd ./self
+          git init .
+          git remote add origin <%= _SELF_REPO %>
+          git fetch --depth 1 origin <%= _REVISION %>
+          git checkout FETCH_HEAD
+
+          cd /src-volume
+          cp -R ./xenforo2/xenforo ./xenforo
+          cp ./self/_files/ci/config.php ./xenforo/src/config.php
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data-volume
+        - name: src-volume
+          mountPath: /src-volume
+      - name: xf-rebuild
+        image: xfrocks/xenforo:php-apache-7.3.12
+        envFrom:
+        - configMapRef:
+            name: env
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+
+          cd /var/www/html
+
+          php cmd.php xf:rebuild-master-data || true
+        volumeMounts:
+        - name: src-volume
+          mountPath: /var/www/html
+          subPath: xenforo
+        - name: data-volume
+          mountPath: /var/www/html/data
+          subPath: data
+        - name: data-volume
+          mountPath: /var/www/html/internal_data
+          subPath: internal_data
+      containers:
+      - name: php
+        image: xfrocks/xenforo:php-apache-7.3.12
+        envFrom:
+        - configMapRef:
+            name: env
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: src-volume
+          mountPath: /var/www/html
+          subPath: xenforo
+        - name: data-volume
+          mountPath: /var/www/html/data
+          subPath: data
+        - name: data-volume
+          mountPath: /var/www/html/internal_data
+          subPath: internal_data
+      volumes:
+      - name: data-volume
+        emptyDir: {}
+      - name: src-volume
+        emptyDir: {}

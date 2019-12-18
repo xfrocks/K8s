@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    db: mysql
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      db: mysql
+  serviceName: mysql
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  template:
+    metadata:
+      labels:
+        db: mysql
+    spec:
+      initContainers:
+      - name: mkdir
+        image: alpine/git
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -euo pipefail
+
+          cd /data-claim
+          mkdir -p -m 0777 ./data
+
+          ls -al ./data
+        volumeMounts:
+        - name: data-claim
+          mountPath: /data-claim
+      containers:
+      - name: mysql
+        envFrom:
+        - configMapRef:
+            name: env
+        image: mysql:5.7.28
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: data-claim
+          subPath: data
+          mountPath: /var/lib/mysql

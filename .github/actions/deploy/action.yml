@@ -1,0 +1,6 @@
+name: Deploy action
+runs:
+  using: docker
+  image: daohoangson/kubernetes-deploy:0.23.0
+  args:
+  - ./.github/actions/deploy/run.sh

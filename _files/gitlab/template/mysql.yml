@@ -19,6 +19,8 @@ spec:
     matchLabels:
       db: mysql
   serviceName: mysql
+  updateStrategy:
+    type: RollingUpdate
   volumeClaimTemplates:
   - metadata:
       name: data-claim

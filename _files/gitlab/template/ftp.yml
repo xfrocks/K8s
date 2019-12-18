@@ -22,6 +22,8 @@ spec:
     matchLabels:
       app: ftp
   serviceName: ftp
+  updateStrategy:
+    type: RollingUpdate
   volumeClaimTemplates:
   - metadata:
       name: data-claim

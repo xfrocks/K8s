@@ -2,10 +2,7 @@
 
 set -euo pipefail
 
-_slug=$( echo $GITHUB_REF | sed 's#^refs/heads/##' | sed 's#[^a-z0-9]##gi' )
-echo "_slug=$_slug"
-
-_ingressHost="$_slug.k8s.xfrocks.com"
+_ingressHost=$( echo $_environmentUrl | sed 's#^https*://##' )
 _namespace="xfrocks-k8s-$_slug"
 
 kubectl-config.sh

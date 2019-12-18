@@ -51,7 +51,7 @@ spec:
       - name: ftp
         env:
         - name: USERS
-          value: data|password
+          value: data|password internal_data|password
         envFrom:
         - configMapRef:
             name: env

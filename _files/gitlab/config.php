@@ -16,3 +16,12 @@ $config['fsAdapters']['data'] = function () {
 $config['externalDataUrl'] = function ($externalPath, $canonical) {
   return sprintf('http://%s/data/%s', getenv('_ingressHost'), $externalPath);
 };
+
+$config['fsAdapters']['internal-data'] = function () {
+  return new \League\Flysystem\Adapter\Ftp([
+  	'host' => 'ftp',
+  	'passive' => false,
+  	'password' => 'password',
+  	'username' => 'internal_data',
+  ]);
+};

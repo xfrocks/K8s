@@ -47,7 +47,6 @@ spec:
         volumeMounts:
         - name: data-claim
           mountPath: /usr/share/nginx/html
-          readOnly: true
       - name: ftp
         env:
         - name: USERS

@@ -50,6 +50,13 @@ spec:
       - name: ftp
         image: stilliard/pure-ftpd:hardened
         imagePullPolicy: Always
+        command:
+        - /run.sh
+        - -l
+        - puredb:/etc/pure-ftpd/pureftpd.pdb
+        - -E
+        - -P
+        - ftp
         ports:
         - name: ftp-21
           containerPort: 21

@@ -76,15 +76,6 @@ spec:
           value: password
         - name: FTP_USER_HOME
           value: /home/internal_data
-        command:
-        - /bin/sh
-        - -c
-        - |
-          set -e
-
-          ls -al /etc/pure-ftpd/conf
-          
-          cat /etc/pure-ftpd/conf/*
         ports:
         - name: ftp-internal
           containerPort: 10021

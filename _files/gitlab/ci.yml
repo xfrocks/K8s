@@ -3,18 +3,19 @@ variables:
   GIT_DEPTH: 1
   K8S_NAMESPACE: xfrocks-using-k8s-$CI_COMMIT_REF_SLUG
 
-deploy_k8s:
+deploy_review:
   environment:
-    name: $CI_BUILD_REF_NAME
+    name: review/$CI_BUILD_REF_NAME
     url: http://$CI_COMMIT_REF_SLUG.using-k8s.xfrocks.com
+    on_stop: stop_review
   image: $DOCKER_IMAGE_KUBERNETES_DEPLOY
   script: ./_files/gitlab/deploy.sh
-  except:
-    - master
+  only:
+    - merge_requests
 
-stop_k8s:
+stop_review:
   environment:
-    name: $CI_BUILD_REF_NAME
+    name: review/$CI_BUILD_REF_NAME
     action: stop
   image: $DOCKER_IMAGE_KUBERNETES_DEPLOY
   variables:

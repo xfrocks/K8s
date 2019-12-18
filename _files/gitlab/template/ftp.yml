@@ -4,10 +4,10 @@ metadata:
   name: ftp
 spec:
   ports:
-  - name: ftp-21
+  - name: ftp-external
     port: 21
     targetPort: ftp-external
-  - name: ftp-10021
+  - name: ftp-internal
     port: 10021
     targetPort: ftp-internal
   - name: http-80
@@ -78,7 +78,20 @@ spec:
         imagePullPolicy: Always
         ports:
         - name: ftp-internal
-          containerPort: 21
+          containerPort: 10021
         volumeMounts:
         - name: data-claim
           mountPath: /home
+        - name: ftp-internal-volume
+          mountPath: /etc/pure-ftpd/conf
+      volumes:
+      - name: ftp-internal-volume
+        configMap:
+          name: ftp-internal
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ftp-internal
+data:
+  Bind: ',10021'

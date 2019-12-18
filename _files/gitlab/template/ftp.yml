@@ -44,9 +44,12 @@ spec:
           containerPort: 80
         volumeMounts:
         - name: data-claim
-          mountPath: /usr/share/nginx/html/data
+          mountPath: /usr/share/nginx/html
           readOnly: true
       - name: ftp
+        env:
+        - name: USERS
+          value: data|password
         envFrom:
         - configMapRef:
             name: env
@@ -57,4 +60,4 @@ spec:
           containerPort: 21
         volumeMounts:
         - name: data-claim
-          mountPath: /ftp/ftp
+          mountPath: /ftp

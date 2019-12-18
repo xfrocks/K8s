@@ -9,10 +9,8 @@ $config['fsAdapters']['data'] = function () {
   return new \League\Flysystem\Adapter\Ftp([
   	'host' => 'ftp',
   	'passive' => false,
-
-  	# https://github.com/delfer/docker-alpine-ftp-server/blob/master/start_vsftpd.sh
-  	'username' => 'ftp',
-  	'password' => 'ftpalpine'
+  	'password' => 'password',
+  	'username' => 'data',
   ]);
 };
 $config['externalDataUrl'] = function ($externalPath, $canonical) {

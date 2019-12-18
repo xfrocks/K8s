@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftp
+spec:
+  ports:
+  - name: ftp
+    port: 21
+    targetPort: 21
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: ftp
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: ftp
+spec:
+  selector:
+    matchLabels:
+      app: ftp
+  serviceName: ftp
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  template:
+    metadata:
+      labels:
+        app: ftp
+    spec:
+      initContainers:
+      - name: mkdir
+        image: alpine/git
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -euo pipefail
+
+          cd /data-claim
+          mkdir -p -m 0777 ./data
+          mkdir -p -m 0777 ./internal_data
+        volumeMounts:
+        - name: data-claim
+          mountPath: /data-claim
+      containers:
+      - name: nginx
+        image: nginx:1.17.6-alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data-claim
+          mountPath: /usr/share/nginx/html
+      - name: ftp
+        image: stilliard/pure-ftpd:hardened
+        imagePullPolicy: Always
+        command:
+        - /run.sh
+        - -l
+        - puredb:/etc/pure-ftpd/pureftpd.pdb
+        - -E
+        - -P
+        - ftp
+        ports:
+        - containerPort: 21
+        volumeMounts:
+        - name: data-claim
+          mountPath: /home/ftpusers
+        - name: pure-ftpd-passwd-volume
+          mountPath: /etc/pure-ftpd/passwd
+      volumes:
+      - name: pure-ftpd-passwd-volume
+        secret:
+          secretName: pure-ftpd-passwd
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pure-ftpd-passwd
+data:
+  pureftpd.passwd: ZGF0YTokNiRKTlpJSWgvQlZyRzBiWVkwJHhVQTdmRWxKLlBoSXV2Y0EubTdsQnJURGpjVUZObUF0QVJkT1JkLi4xaWVvL3U2VldpN2QuenV4OHlKam5NLjYuS0J3OXlOcDd5aU5tZDBtaW9wODQwOjEwMDA6MTAwMDo6L2hvbWUvZnRwdXNlcnMvZGF0YS8uLzo6Ojo6Ojo6Ojo6OgppbnRlcm5hbF9kYXRhOiQ2JElRUy9OeVJ4Y0pNaWlSbzAkMWYudUJmN2N6WkZSVUFvdEx0bzNCRU5tNXVQZ3F4bmNoRWlQd3h4b3k1dTlnRVZYY2dHcjkubmU2bTdFbWpxRGZIV2FyU2RILy5hSXFESjZpVkVXYS46MTAwMDoxMDAwOjovaG9tZS9mdHB1c2Vycy9pbnRlcm5hbF9kYXRhLy4vOjo6Ojo6Ojo6Ojo6Cg==
+

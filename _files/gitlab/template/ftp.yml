@@ -51,6 +51,8 @@ spec:
         - name: data-claim
           mountPath: /usr/share/nginx/html
       - name: ftp-external
+        image: stilliard/pure-ftpd:hardened
+        imagePullPolicy: Always
         env:
         - name: FTP_USER_NAME
           value: data
@@ -58,8 +60,6 @@ spec:
           value: password
         - name: FTP_USER_HOME
           value: /home/data
-        image: stilliard/pure-ftpd:hardened
-        imagePullPolicy: Always
         ports:
         - name: ftp-external
           containerPort: 21
@@ -67,6 +67,8 @@ spec:
         - name: data-claim
           mountPath: /home
       - name: ftp-internal
+        image: stilliard/pure-ftpd:hardened
+        imagePullPolicy: Always
         env:
         - name: FTP_USER_NAME
           value: internal_data
@@ -74,8 +76,15 @@ spec:
           value: password
         - name: FTP_USER_HOME
           value: /home/internal_data
-        image: stilliard/pure-ftpd:hardened
-        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+
+          ls -al /etc/pure-ftpd/conf
+          
+          cat /etc/pure-ftpd/conf/*
         ports:
         - name: ftp-internal
           containerPort: 10021
@@ -83,7 +92,8 @@ spec:
         - name: data-claim
           mountPath: /home
         - name: ftp-internal-volume
-          mountPath: /etc/pure-ftpd/conf
+          subPath: Bind
+          mountPath: /etc/pure-ftpd/conf/Bind
       volumes:
       - name: ftp-internal-volume
         configMap:

@@ -38,6 +38,21 @@ spec:
       labels:
         app: ftp
     spec:
+      initContainers:
+      - name: mkdir
+        image: alpine/git
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -euo pipefail
+
+          cd /data-claim
+          mkdir -p -m 0777 ./data
+          mkdir -p -m 0777 ./internal_data
+        volumeMounts:
+        - name: data-claim
+          mountPath: /data-claim
       containers:
       - name: nginx
         image: nginx:1.17.6-alpine
